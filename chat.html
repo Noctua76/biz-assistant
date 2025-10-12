@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>GPT Local Test</title>
+  <style>
+    body { font-family: system-ui, Arial; max-width: 680px; margin: 40px auto; }
+    #out { white-space: pre-wrap; background: #f6f6f6; padding: 12px; border-radius: 10px; }
+    #row { display: flex; gap: 8px; margin-top: 12px; }
+    input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 10px; }
+    button { padding: 10px 14px; border: 0; border-radius: 10px; background: #111; color: #fff; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h3>Test your GPT Assistant (local)</h3>
+  <div id="row">
+    <input id="msg" placeholder="Write your message…" />
+    <button id="send">Send</button>
+  </div>
+  <div id="out" style="margin-top:16px;">Ready.</div>
+
+  <script>
+    const BACKEND_URL = "http://localhost:3000/chat"; // ο server σου
+
+    function add(text) {
+      const out = document.getElementById('out');
+      out.textContent = text;
+    }
+
+    async function send() {
+      const message = document.getElementById('msg').value.trim();
+      if (!message) return;
+      add("⏳ Sending…");
+      try {
+        const res = await fetch(BACKEND_URL, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ message })
+        });
+        const data = await res.json();
+        add(data.reply ?? JSON.stringify(data, null, 2));
+      } catch (err) {
+        add("⚠️ Error: " + err);
+        console.error(err);
+      }
+    }
+
+    document.getElementById('send').addEventListener('click', send);
+    document.getElementById('msg').addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+  </script>
+</body>
+</html>
