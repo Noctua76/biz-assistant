@@ -19,6 +19,12 @@ app.get("/", (_, res) => res.send("OK: GPT backend up"));
 
 // --- Chat endpoint (Assistants Threads/Runs + File Search) ---
 app.post("/chat", async (req, res) => {
+  const msg = req.body.message;
+
+  // 🕒 Καταγραφή χρόνου και IP
+  const time = new Date().toLocaleString("el-GR", { timeZone: "Europe/Athens" });
+  console.log(`[${time}] 🧠 New message from ${req.ip}: ${msg}`);
+
   try {
     const user = (req.body?.message || "").slice(0, 2000);
 
